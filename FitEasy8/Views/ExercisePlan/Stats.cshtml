@@ -1,0 +1,58 @@
+﻿@model FitEasy8.ViewModels.ExercisePlanIndexData
+
+@{
+    ViewBag.Title = "Stats";
+}
+
+<h1>Statistics and Suggestions</h1>
+<p>Taking your Target Aim, Types of Plans, The percent of each type being used in your plans and numbe of Plans completed into account we will provide you with our suggestions. Have a look!!</p>
+<p>@Html.ActionLink("Back to Plans", "Index", "ExercisePlan", null)</p>
+<br />
+<br />
+<br />
+<div>
+
+
+    <h2> Exercise Type Comparison</h2>
+    <h4>Types of Exercises in all Plans</h4>
+
+    <img src="@Url.Action("CharterColumn")" alt="Chart" />
+</div>
+<div>
+    <h1> Suggestions</h1>
+    <p>@ViewBag.SMessage</p>
+    <p>@ViewBag.aMessage</p>
+    <p>@ViewBag.rMessage</p>
+    <p>@ViewBag.fMessage</p>
+
+</div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<div>
+    <h2> Exercise Plan Completion Ratio</h2>
+    <h4>All Plans</h4>
+    <img src="@Url.Action("ChartPie")" alt="Chart" />
+</div>
+<div>
+    <h1> Suggestions</h1>
+    <p>@ViewBag.isdmessage</p>
+
+</div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<div>
+    <h2> Percentage of different types of Exercises</h2>
+    <h4>All Plan's Exercises</h4>
+    <img src="@Url.Action("ChartPieType")" alt="Chart" />
+</div>
+<p>@Html.ActionLink("Back to Plans", "Index", "ExercisePlan", null)</p>
+
+

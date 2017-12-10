@@ -1,0 +1,43 @@
+﻿@model IEnumerable<FitEasy8.Models.BodyPart>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>BodyParts</h2>
+
+<p>
+
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ImageUrl)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                <img src="@item.ImageUrl" height="150" width="150" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+
+        </tr>
+    }
+
+</table>

@@ -1,0 +1,69 @@
+﻿@model IEnumerable<FitEasy8.Models.BMI>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Weight and BMI Record</h2>
+
+<p>
+
+    @Html.ActionLink("Create New", "Create") || @Html.ActionLink("Stats and Suggestions", "Stats", "BMI", null)
+</p>
+<table class="table">
+    <tr>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Weight)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Height)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Result.Value)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Verdict)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AddedOn)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Weight)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Height)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Result.Value)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Verdict)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AddedOn)
+            </td>
+            <td>
+                @Html.ActionLink("Delete", "Delete", new { id = item.BmiId })
+            </td>
+        </tr>
+    }
+
+</table>
+
+@*<p>Combined Average Weight : @ViewBag.Average</p>
+    <b/>
+    <h1>Progress</h1>
+    <img src="@Url.Action("CharterColumn")" alt="Chart" />
+
+    <b/>
+    <h2>Suggestion</h2>
+    <p>@ViewBag.wMessage</p>*@

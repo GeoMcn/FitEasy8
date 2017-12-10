@@ -1,0 +1,65 @@
+﻿@model FitEasy8.ViewModels.ExercisePlanIndexData
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h1>My Exercise Plans</h1>
+
+<p>
+    Number of Plans:  @ViewBag.Count, Plans complete : @ViewBag.isComplete, Percent : @ViewBag.getCount
+</p>
+<p>
+    @Html.ActionLink("Create New", "Create") || @Html.ActionLink("Stats and Suggestions", "Stats", "ExercisePlan", null)
+
+
+</p>
+<table class="table">
+    <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>IsComplete?</th>
+        <th>TimesCompleted</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.MyExercisePlans)
+    {
+        string selectedRow = "";
+        if (item.MyExercisePlanID == ViewBag.MyExercisePlanID)
+        {
+            selectedRow = "success";
+        }
+        <tr class="@selectedRow">
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+
+            <td>
+                @Html.ValueFor(modelItem => item.IsDone)
+            </td>
+            <td>
+                @Html.ValueFor(modelItem => item.IsComplete.Value)
+            </td>
+            <td>
+                @Html.ActionLink("Do / Undo", "Done", new { id = item.MyExercisePlanID }) ||
+                @Html.ActionLink("Edit", "Edit2", new { id = item.MyExercisePlanID }) ||
+                @Html.ActionLink("Details", "Details2", new { id = item.MyExercisePlanID }) |
+                @Html.ActionLink("Delete", "Delete2", new { id = item.MyExercisePlanID })
+            </td>
+
+        </tr>
+
+
+    }
+
+
+
+
+</table>
+
+
+<h4>@ViewBag.message</h4>

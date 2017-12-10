@@ -1,0 +1,45 @@
+﻿@model FitEasy8.ViewModels.AchievementIndexData
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h1>My Achievements</h1>
+
+
+<table class="table">
+    <tr>
+        <th>Completed Plan Name</th>
+        <th>Description</th>
+    </tr>
+
+    @foreach (var item in Model.Achievements)
+    {
+        string selectedRow = "";
+        if (item.AchievementId == ViewBag.AchievementId)
+        {
+            selectedRow = "success";
+        }
+        <tr class="@selectedRow">
+
+            <td>
+                @Html.DisplayFor(modelItem => item.ExercisePlanName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+
+            <td>
+                @Html.ActionLink("Voucher Used?", "Delete", new { id = item.AchievementId })
+        </td>
+
+    </tr>
+
+
+    }
+
+
+
+
+</table>
+

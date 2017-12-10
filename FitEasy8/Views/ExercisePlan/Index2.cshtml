@@ -1,0 +1,83 @@
+﻿@model FitEasy8.ViewModels.ExercisePlanIndexData
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+
+<table class="table">
+    <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Exercises</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.ExercisePlans)
+    {
+        string selectedRow = "";
+        if (item.ExercisePlanID == ViewBag.ExercisePlanID)
+        {
+            selectedRow = "success";
+        }
+        <tr class="@selectedRow">
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+
+            <td>
+                @{
+                    foreach (var exercise in item.Exercises)
+                    {
+                        @exercise.ExerciseID @:  @exercise.Title <br />
+                    }
+                }
+            </td>
+
+            <td>
+                @Html.ActionLink("AddToMyPlans", "AddToPlan", new { id = item.ExercisePlanID })
+                @Html.ActionLink("Details", "Details", new { id = item.ExercisePlanID })
+            </td>
+        </tr>
+                    }
+
+</table>
+
+@if (Model.Exercises != null)
+{
+    <h3>Exercises in Plan</h3>
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>Title</th>
+            <th>Body Part</th>
+        </tr>
+
+        @foreach (var item in Model.Exercises)
+        {
+            string selectedRow = "";
+            if (item.ExerciseID == ViewBag.ExerciseID)
+            {
+                selectedRow = "success";
+            }
+            <tr class="@selectedRow">
+                <td>
+                    @Html.ActionLink("Select", "Index", new { exerciseID = item.ExerciseID })
+                </td>
+
+                <td>
+                    @item.Title
+                </td>
+                <td>
+                    @item.BodyParts
+                </td>
+            </tr>
+        }
+
+    </table>
+}

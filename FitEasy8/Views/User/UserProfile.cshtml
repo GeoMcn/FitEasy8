@@ -1,0 +1,108 @@
+﻿@model FitEasy8.ViewModels.UserProfile
+
+@{
+    ViewBag.Title = "UserProfile";
+}
+
+
+
+<h2>My Profile</h2>
+
+<div>
+    <h4>@Html.DisplayFor(model => model.FirstName)  @Html.DisplayFor(model => model.LastName)</h4>
+
+    <p>
+        || Number of Plans:  @ViewBag.Count || Currently Complete : @ViewBag.isComplete || Complete : @ViewBag.getCount % || Overall Plans completed : @ViewBag.OverallPlansCompleted  ||
+    </p>
+    <p>
+        || Number of Exercises:  @ViewBag.ExerciseCount || Exercisess complete : @ViewBag.exerciseIsComplete || Complete : @ViewBag.getExerciseCount % || Overall Exercises completed : @ViewBag.OverallExercisesCompleted ||
+    </p>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dd>
+            <img src="@Url.Action("UserPhotos", "User" )" height="160" width="160" alt="No User Profile Image!" />
+        </dd>
+        <dt>
+            Name
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)  @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+        <dt>
+            @Html.ActionLink("Achievements", "Index", "Achievement")
+        </dt>
+
+        <dd>
+            @ViewBag.Count3
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Height)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Height)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Weight)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Weight)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TargetAim)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TargetAim)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Password)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Password)
+        </dd>
+
+    </dl>
+
+</div>
+<div class="navbar-collapse collapse">
+
+    <ul class="nav navbar-nav">
+        <li>@Html.ActionLink("MyAchievements", "Index", "Achievement")</li>
+        <li>@Html.ActionLink("Exercises", "Index", "Exercise")</li>
+        <li>@Html.ActionLink("Suggested Exercises", "SuggestedExercises", "Exercise")</li>
+        <li>@Html.ActionLink("ExercisePlans", "Index2", "ExercisePlan")</li>
+        <li>@Html.ActionLink("BodyParts", "Index", "BodyPart")</li>
+        <li>@Html.ActionLink("Edit", "Edit", new { id = Model.Id })</li>
+        <li>@Html.ActionLink("All Users", "Index")</li>
+    </ul>
+
+</div>
+
+
+

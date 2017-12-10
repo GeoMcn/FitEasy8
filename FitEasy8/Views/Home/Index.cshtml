@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <img src="@Url.Action("Photo", "User" )" height="250" width="600" />
+    <h1>FitEasy </h1>
+    <p class="lead">FitEasy, The easy way to get fit. </p>
+
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Getting started</h2>
+        <p>
+
+            Sign Up to FitEasy to gain access to a wide range of Exercises and Exercise Plans to give you a boost start to a healthier life.
+        </p>
+        <p>@Html.ActionLink("Sign up", "Register", "Account")</p>
+    </div>
+    <div class="col-md-4">
+        <h2>Create a Plan</h2>
+        <p>It is easy to create workout plans that best suit your interests. Simply scroll through the list of exercises and press the 'Add to Plan' button that appears beside them.</p>
+        <p>@Html.ActionLink("Log In", "Login", "Account")    </p>
+    </div>
+    <div class="col-md-4">
+        <h2>Tracking Fitness</h2>
+        <p>The added bonus of charts and graphs will track your progress and suggest certain improvements that need to be made</p>
+        <p> @Html.ActionLink("Exercises", "Index", "Exercise")</p>
+    </div>
+
+    <div class="backBg" id="loginpopup">
+        @{Html.RenderPartial("_LoginPartial", new FitEasy8.ViewModels.LoginViewModel() { UserName = (Request.Cookies["RememberMe"] != null ? Request.Cookies["RememberMe_UserEmailId"].Value : ""), Password = (Request.Cookies["RememberMe_Password"] != null ? Request.Cookies["RememberMe_Password"].Value : ""), RememberMe = string.IsNullOrEmpty((Request.Cookies["RememberMe_UserEmailId"] != null ? Request.Cookies["RememberMe_UserEmailId"].Value : "")) ? false : true });}
+    </div>  <!--Partial Login-->
+</div>

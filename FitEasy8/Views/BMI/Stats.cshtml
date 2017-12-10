@@ -1,0 +1,19 @@
+﻿
+
+@{
+    ViewBag.Title = "Stats";
+}
+
+<h1>Weight Stats and Suggestions</h1>
+<h2>Weight Stats : </h2>
+<p>@Html.ActionLink("Back to BMI", "Index", "BMI", null)</p>
+<b />
+<h1>Progress</h1>
+<img src="@Url.Action("CharterColumn")" alt="Chart" />
+
+<b />
+<p>Combined Average Weight : @ViewBag.Average</p>
+
+<h2>Suggestion : </h2>
+<p>@ViewBag.wMessage</p>
+

@@ -1,0 +1,73 @@
+﻿@model FitEasy8.ViewModels.ChosenExerciseIndexData
+
+@{
+    ViewBag.Title = "Exercises";
+}
+
+
+<h2>Exercises In Plan</h2>
+<p>
+    Number of Exercises in Plan:  @ViewBag.Count, Exercises complete : @ViewBag.isComplete, Percent : @ViewBag.getCount %
+</p>
+<h4>@ViewBag.message</h4>
+<table class="table">
+    <tr>
+        <th>Title</th>
+        <th>Image</th>
+        <th>Description</th>
+        @*<th>Video</th>*@
+        @*<th>Type</th>*@
+        <th>IsDone</th>
+        <th>TimesCompleted</th>
+        <th>Exercise Plan</th>
+
+    </tr>
+
+    @foreach (var item in Model.ChosenExercises)
+    {
+        string selectedRow = "";
+        if (item.ChosenExerciseID == ViewBag.ChosenExerciseID)
+        {
+            selectedRow = "success";
+        }
+        <tr class="@selectedRow">
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+
+            <td>
+                <img src="@item.ImageUrl" height="150" width="150" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+
+
+            @*<td>
+                    @Html.ValueFor(modelItem => item.Type)
+                </td>*@
+            <td>
+                @Html.ValueFor(modelItem => item.IsDone)
+            </td>
+            <td>
+                @Html.ValueFor(modelItem => item.Complete.Value)
+            </td>
+            <td>
+                @Html.ValueFor(modelItem => item.ExercisePlanID)
+            </td>
+            <td>
+                @Html.ActionLink("Done", "Done", new { id = item.ChosenExerciseID }, null)
+                @Html.ActionLink("Undo", "NotDone", new { id = item.ChosenExerciseID }, null)
+                @Html.ActionLink("Details", "Details", new { id = item.ChosenExerciseID })
+                @Html.ActionLink("Plan", "Details2", "ExercisePlan", new { id = item.ExercisePlanID }, null)
+            </td>
+
+        </tr>
+
+
+
+    }
+
+</table>
+
+<img src="@Url.Action("CharterColumn")" alt="Chart" />

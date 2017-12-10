@@ -1,0 +1,108 @@
+﻿@model FitEasy8.Models.User
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+
+@using (Html.BeginForm("Edit", "User", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Edit account profile.</h4>
+    <p>If you wish to change Height or weight, please Create new BMI record.</p>
+    <hr />
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.TargetAim, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("TargetAim", ViewBag.EnumList1 as SelectList)
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Image, new { @class = "col-md-2 control-label" })
+                <div class="col-md-10">
+
+                    <input type="file" name="Image" id="fileUpload" accept=".png,.jpg,.jpeg,.gif,.tif" />
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <h4>Exercise Plans</h4>
+                    <table>
+                        <tr>
+                            @{
+                                int cnt = 0;
+                                List<FitEasy8.ViewModels.AssignedExercisePlanData> exercisePlans = ViewBag.ExercisePlans;
+
+                                foreach (var exercisePlan in exercisePlans)
+                                {
+                                    if (cnt++ % 3 == 0)
+                                    {
+                                        @:</tr> <tr>
+                                }
+                                    @:<td>
+                                        <input type="checkbox"
+                                               name="selectedExercisePlans"
+                                               value="@exercisePlan.ExercisePlanID"
+                                               @(Html.Raw(exercisePlan.Assigned ? "checked=\"checked\"" : "")) />
+                                            @exercisePlan.ExercisePlanID @:  @exercisePlan.Title
+                                            @:</td>
+                            }
+                                @: </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+
+
+
+
+
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" class="btn btn-default" value="Save" />
+                    </div>
+                </div>
+                                }
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

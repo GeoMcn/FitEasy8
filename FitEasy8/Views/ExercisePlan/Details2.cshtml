@@ -1,0 +1,102 @@
+﻿@model FitEasy8.ViewModels.MyExercisePlanVM
+
+@{
+    ViewBag.Title = "Details2";
+}
+
+
+<h2>Details</h2>
+
+<div>
+    <h4>My ExercisePlan</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsDone)
+        </dt>
+
+        <dd>
+            @Model.IsDone
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Difficulty)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Difficulty)
+        </dd>
+
+        <dt>
+            Difficulty Setting
+        </dt>
+
+        <dd>
+            @Html.ActionLink("+", "Harder", new { id = Model.MyExercisePlanID })  @Html.ActionLink("-", "Easier", new { id = Model.MyExercisePlanID })
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Reps)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Reps)
+        </dd>
+
+        <dd>
+            @Html.ActionLink("Exercise Info", "Index", "ChosenExercise", new { id = Model.MyExercisePlanID }, null)
+            <table class="table">
+                <tr>
+                    <th>Exercises</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>IsComplete</th>
+                </tr>
+
+                @foreach (var exercise in ViewBag.myExercises)
+                {
+                    <tr>
+                        <td>
+                            @exercise.Title
+                        </td>
+                        <td>
+                            @exercise.Description
+                        </td>
+                        <td>@exercise.Type</td>
+                        <td>@exercise.IsDone</td>
+
+                        <td>
+                            @Html.ActionLink("Done", "ExerciseDone", new { id = exercise.ChosenExerciseID }) |||
+                            @Html.ActionLink("Undo", "ExerciseNotDone", new { id = exercise.ChosenExerciseID }) ||
+                        </td>
+                    </tr>
+                }
+            </table>
+
+        </dd>
+
+
+
+
+    </dl>
+</div>
+
+@*<img src="@Url.Action("CharterColumn2")" alt="Chart" />*@
+
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>

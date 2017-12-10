@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewBag.Title = "Email";
+}
+
+<h1>Invalid Registration.</h1>
+<h2>Email is already in use.</h2>
+
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>Log in</h3>
+        <p>If you already have an account would you like to log in?</p>
+        <p>@Html.ActionLink("Log In", "Login", "Account")    </p>
+    </div>
+    <div class="col-md-4">
+        <h3>Not your Email?</h3>
+        <p> Try registering again with a different e-mail account.</p>
+        <p>@Html.ActionLink("Sign up", "Register", "Account")</p>
+    </div>
+
+</div>

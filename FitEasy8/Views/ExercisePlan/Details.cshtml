@@ -1,0 +1,72 @@
+﻿@model FitEasy8.ViewModels.ExercisePlanVM
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ExercisePlan</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Difficulty)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Difficulty)
+        </dd>
+
+        <dd>
+            <table class="table">
+                <tr>
+                    <th>Exercises</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>BodyPart</th>
+                </tr>
+
+                @foreach (var exercise in Model.Exercises)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => exercise.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => exercise.Description)
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => exercise.Type)</td>
+                    <td>@Html.DisplayFor(modelItem => exercise.BodyPart.Title)</td>
+                </tr>
+                }
+            </table>
+        </dd>
+
+
+
+
+    </dl>
+
+</div>
+
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ExercisePlanID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
