@@ -18,7 +18,7 @@
         </p>
         <p>@Html.ActionLink("Sign up", "Register", "Account")</p>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4" >
         <h2>Create a Plan</h2>
         <p>It is easy to create workout plans that best suit your interests. Simply scroll through the list of exercises and press the 'Add to Plan' button that appears beside them.</p>
         <p>@Html.ActionLink("Log In", "Login", "Account")    </p>
@@ -29,7 +29,5 @@
         <p> @Html.ActionLink("Exercises", "Index", "Exercise")</p>
     </div>
 
-    <div class="backBg" id="loginpopup">
-        @{Html.RenderPartial("_LoginPartial", new FitEasy8.ViewModels.LoginViewModel() { UserName = (Request.Cookies["RememberMe"] != null ? Request.Cookies["RememberMe_UserEmailId"].Value : ""), Password = (Request.Cookies["RememberMe_Password"] != null ? Request.Cookies["RememberMe_Password"].Value : ""), RememberMe = string.IsNullOrEmpty((Request.Cookies["RememberMe_UserEmailId"] != null ? Request.Cookies["RememberMe_UserEmailId"].Value : "")) ? false : true });}
-    </div>  <!--Partial Login-->
+   
 </div>

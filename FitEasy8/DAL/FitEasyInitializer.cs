@@ -132,17 +132,6 @@ namespace FitEasy8.DAL
             bmis.ForEach(s => context.BMI.Add(s));
             context.SaveChanges();
 
-
-            //<!-- var exercisePlans = new List<ExercisePlan>
-            // {
-            // new ExercisePlan{ExercisePlanID = 328, Title="Strength, no Weights", Description = "No weights needed for this do it at home plan ",},
-            // new ExercisePlan{ExercisePlanID = 9428, Title="Push Up", Description = "Level 1 : 5X10, Level 2 : 5X15, Level 3 : 10X10  " },
-            // new ExercisePlan{ExercisePlanID = 8240 ,Title="Chin Up", Description = "Level 1 : 5X5, Level 2 : 5X10, Level 3 : 10X10  " },
-            // new ExercisePlan{ExercisePlanID = 744, Title="Sit Up", Description = "Level 1 : 5X10, Level 2 : 5X15, Level 3 : 10X10  " },
-            // new ExercisePlan{ExercisePlanID = 222, Title="Sprints", Description = " " },
-            // };
-            // exercises.ForEach(s => context.Exercises.Add(s));
-            // context.SaveChanges(); -->
         }
     }
 }

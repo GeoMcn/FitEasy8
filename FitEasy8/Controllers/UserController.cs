@@ -56,7 +56,7 @@ namespace FitEasy8.Controllers
 
             };
 
-
+            //Gets Amount Number of user achievements
             double? countAchievements = 0;
             foreach (var achievement in db.Achievements)
             {
@@ -69,6 +69,7 @@ namespace FitEasy8.Controllers
                 ViewBag.Count3 = countAchievements.Value;
             }
 
+            //Gets Number of user Exercise Plans currently has
             double? count = 0;
             foreach (var plan in db.MyExercisePlans)
             {
@@ -80,6 +81,8 @@ namespace FitEasy8.Controllers
                 }
             }
 
+            //Gets how many Plans are currently set to Done
+            //Sends back message if all Plans are copmlete
             double? isDone = 0;
             foreach (var plan in db.MyExercisePlans)
             {
@@ -101,20 +104,22 @@ namespace FitEasy8.Controllers
 
 
 
-
+            //Gets Overall total amount of Exercise Plans User has copmleted since Registration.
             decimal? totalPlansCompleted = (from users in db.Users
                                             where users.Id == currentUser.Id
                                             select (int?)users.Count * users.PlansCompleted.Value).Sum();
 
             ViewBag.OverallPlansCompleted = totalPlansCompleted.ToString();
 
+
+            //Gets Overall total amount of Exercises User has copmleted since Registration.
             decimal? totalExercisesCompleted = (from users in db.Users
                                                 where users.Id == currentUser.Id
                                                 select (int?)users.Count * users.ExercisesCompleted.Value).Sum();
 
             ViewBag.OverallExercisesCompleted = totalExercisesCompleted.ToString();
 
-
+            //Gets amount of Exercises User currently has
             double? exerciseCount = 0;
             foreach (var exercise in db.ChosenExercises)
             {
@@ -125,6 +130,7 @@ namespace FitEasy8.Controllers
                 }
             }
 
+            //Gets the amount of exercises that are done and sends message if all exercises are complete
             double? exerciseIsDone = 0;
             foreach (var exercise in db.ChosenExercises)
             {
@@ -256,7 +262,7 @@ namespace FitEasy8.Controllers
         {
 
             var user = db.Users.Include(i => i.ExercisePlans).Where(p => p.Id == id).FirstOrDefault();
-            // note you may need to add .Include("SpecificationsTable") in the above
+            
             if (user == null)
             {
                 return new HttpNotFoundResult();
@@ -274,7 +280,6 @@ namespace FitEasy8.Controllers
                 Username = user.UserName,
                 Email = user.Email,
                 TargetAim = user.TargetAim,
-                //MyExercisePlan = user.MyExercisePlan,
 
                 ExercisePlans = user.ExercisePlans.Select(s => new ExercisePlanVM()
                 {
@@ -334,8 +339,6 @@ namespace FitEasy8.Controllers
         }
 
         // POST: User/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EditPost(string id, string[] selectedExercisePlans, HttpPostedFileBase file)
@@ -381,7 +384,6 @@ namespace FitEasy8.Controllers
                 }
                 catch (RetryLimitExceededException /* dex */)
                 {
-                    //Log the error (uncomment dex variable name and add a line here to write a log.
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
                 }
             }
@@ -453,7 +455,6 @@ namespace FitEasy8.Controllers
             }
             catch (RetryLimitExceededException /* dex */)
             {
-                //Log the error (uncomment dex variable name and add a line here to write a log.
                 return RedirectToAction("Delete", new { id = id, saveChangesError = true });
             }
 

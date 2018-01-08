@@ -27,7 +27,7 @@ namespace FitEasy8.App_Start
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
         {
             var manager = new ApplicationUserManager(new UserStore<User>(context.Get<FitEasyContext>()));
-            // Configure validation logic for usernames
+            // Logic for usernames
             manager.UserValidator = new UserValidator<User>(manager)
             {
                 AllowOnlyAlphanumericUserNames = false,
@@ -35,7 +35,7 @@ namespace FitEasy8.App_Start
 
             };
 
-            // Configure validation logic for passwords
+            // Validation Logic for passwords
             manager.PasswordValidator = new PasswordValidator
             {
                 RequiredLength = 3,
@@ -50,8 +50,8 @@ namespace FitEasy8.App_Start
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
 
-            // Register two factor authentication providers. I have left this code here as an option for the future if my app uses Phone and Emails as a step of receiving a code for verifying the user
-            // You can write your own provider and plug it in here.
+            // Register two factor authentication providers. 
+            //I have left this code here as an option for the future if my app uses Phone and Emails as a step of receiving a code for verifying the user.
             manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<User>
             {
                 MessageFormat = "Your security code is {0}"
@@ -73,7 +73,7 @@ namespace FitEasy8.App_Start
         }
     }
 
-    // Configure the application sign-in manager which is used in this application.
+    // Aplication Sign in Manager
     public class ApplicationSignInManager : SignInManager<User, string>
     {
         public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager)
@@ -97,7 +97,7 @@ namespace FitEasy8.App_Start
     {
         public Task SendAsync(IdentityMessage message)
         {
-            // Plug in your email service here to send an email.
+            // I would plugin email service here to send an email.
             return Task.FromResult(0);
         }
     }

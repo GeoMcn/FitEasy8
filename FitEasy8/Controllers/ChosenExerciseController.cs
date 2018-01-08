@@ -32,7 +32,7 @@ namespace FitEasy8.Controllers
         // GET: ChosenExercise
         public async System.Threading.Tasks.Task<ActionResult> Index(int? id)
         {
-
+            //Get current User
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
 
             var viewModel = new ChosenExerciseIndexData();
@@ -50,7 +50,7 @@ namespace FitEasy8.Controllers
 
             }
 
-
+            //Count amount of Exercises in User's Plan
             double? count = 0;
             foreach (var exercise in db.ChosenExercises)
             {
@@ -62,6 +62,7 @@ namespace FitEasy8.Controllers
                 }
             }
 
+            //Count how many are Done and Send message if All are Complete.
             double? isDone = 0;
             foreach (var exercise in db.ChosenExercises)
             {
@@ -83,8 +84,9 @@ namespace FitEasy8.Controllers
             }
 
 
-
+            //percent of Exercises Done In Plan.
             ViewBag.getCount = (isDone.Value / count.Value) * (100);
+
             ViewBag.Count = count.Value;
             ViewBag.isComplete = isDone.Value;
 
@@ -156,11 +158,12 @@ namespace FitEasy8.Controllers
         }
 
 
-
+        //Sets Exercise To done.
         public async Task<ActionResult> Done(int id, Achievement achievement)
         {
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
-            // Retrieve the plan from the database
+
+            // Retrieve the exercise from the database and set its value to true
             var chosenExercise = db.ChosenExercises
                 .Single(exercise => exercise.ChosenExerciseID == id);
 
@@ -169,8 +172,12 @@ namespace FitEasy8.Controllers
             currentUser.ExercisesCompleted++;
             db.SaveChanges();
 
+            //Checking how many Exercises there are in the chosen Plan, 
+            //how many are done,and, if all of them are done then set the Plan to complete.
             var myExercisePlan2 = db.MyExercisePlans
                .Single(exercisePlan => exercisePlan.MyExercisePlanID == chosenExercise.ExercisePlanID);
+
+            //Checking how many Exercises there are in the chosen Plan
             double? exerciseCount = 0;
             foreach (var exercise in db.ChosenExercises)
             {
@@ -181,6 +188,8 @@ namespace FitEasy8.Controllers
                     ViewBag.exerciseCount2 = exerciseCount;
                 }
             }
+
+            //how many are done,
             double? exerciseIsDone = 0;
             foreach (var exercise in db.ChosenExercises)
             {
@@ -196,15 +205,17 @@ namespace FitEasy8.Controllers
                 exerciseCount = 0;
             }
 
+            //if all exercises are done then set the Plan to complete.
             if (exerciseCount >= 1 && exerciseIsDone == exerciseCount)
             {
-                ViewBag.exerciseMessage = "Wow!! You have completed all of your Exercise! ";
+                ViewBag.exerciseMessage = "Wow!! You have completed all of your Exercises! ";
                 myExercisePlan2.IsDone = true;
                 myExercisePlan2.IsComplete++;
                 currentUser.PlansCompleted++;
                 db.SaveChanges();
             }
-
+            
+            // If Not all Exercises are done, set Exercise Plan to Incomplete
             else if (exerciseCount >= 1 && exerciseIsDone != exerciseCount)
             {
 
@@ -212,7 +223,7 @@ namespace FitEasy8.Controllers
                 db.SaveChanges();
             }
 
-
+            //If Exercise plan is completed a certain amount of times, an achievement is created. 
             if (myExercisePlan2.IsComplete == 5)
             {
                 achievement = new Achievement { UserId = currentUser.Id, ExercisePlanName = myExercisePlan2.Title, Date = DateTime.Now, Description = "Congratulations, you have completed your Exercise Plan 5 times! Keep up the good work!" };
@@ -235,7 +246,7 @@ namespace FitEasy8.Controllers
             return RedirectToAction("Index", new { id = chosenExercise.ExercisePlanID });
         }
 
-
+        //sets exercise to undone
         public async Task<ActionResult> NotDone(int id)
         {
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
@@ -247,6 +258,8 @@ namespace FitEasy8.Controllers
 
             var myExercisePlan2 = db.MyExercisePlans
                 .Single(exercisePlan => exercisePlan.MyExercisePlanID == chosenExercise.ExercisePlanID);
+
+            //Counts how many Exercises are in Plan
             double? exerciseCount = 0;
             foreach (var exercise in db.ChosenExercises)
             {
@@ -256,6 +269,8 @@ namespace FitEasy8.Controllers
 
                 }
             }
+
+            //Counts how many Exercises are Done.
             double? exerciseIsDone = 0;
             foreach (var exercise in db.ChosenExercises)
             {
@@ -270,6 +285,7 @@ namespace FitEasy8.Controllers
                 exerciseCount = 0;
             }
 
+            //sets exercise plan to incomplete if  exercises  are not all done.
             if (exerciseCount >= 1 && exerciseIsDone != exerciseCount)
             {
 
@@ -301,18 +317,10 @@ namespace FitEasy8.Controllers
                 Type = exercise.Type,
                 VideoUrl = exercise.VideoUrl,
                 CEBodyPartID = exercise.CEBodyPartID
-                ////BodyPart = db.BodyParts.Where(p => p.BodyPartID == exercise.BodyPartId).FirstOrDefault(),
-
-                ////BodyParts = exercise.BodyParts.Select(s => new BodyPartVM()
-                ////{
-                ////    Title = s.Title,
-                ////    Description = s.Description
-                ////})
+                
             };
-
+            ViewBag.imageUrl = viewmodel.ImageUrl;
             ViewBag.bodyPartss = db.ChosenBodyParts.Where(p => p.ChosenExerciseID == id);
-            //BodyPart bodyPart2 = db.BodyParts.Where(p => p.BodyPartID == bodypart.BodyPartID).FirstOrDefault();
-            //ViewBag.bodyPart = bodypart.ToString();
             return View(viewmodel);
 
         }
@@ -378,124 +386,7 @@ namespace FitEasy8.Controllers
             }
         }
 
-        //public async System.Threading.Tasks.Task<ActionResult> CharterColumn()
-
-        //{
-
-        //    var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
-        //    var chosenExercises = db.ChosenExercises
-        //        .Where(i => i.UserId == currentUser.Id);
-        //    var myExercisePlan = db.MyExercisePlans.Where(p => p.MyExercisePlanID == chosenExercises.ID).FirstOrDefault();
-
-
-        //    int? strength = 0;
-        //    foreach (var exercise in db.ChosenExercises)
-        //    {
-        //        if (exercise.UserId == currentUser.Id && exercise.ExercisePlanID == myExercisePlan.MyExercisePlanID && exercise.Type == Models.Type.Strength)
-        //        {
-        //            strength++;
-        //        }
-        //    };
-        //    int? aerobic = 0;
-        //    foreach (var exercise in db.ChosenExercises)
-        //    {
-        //        if (exercise.UserId == currentUser.Id && exercise.ExercisePlanID == myExercisePlan.MyExercisePlanID && exercise.Type == Models.Type.Aerobic)
-        //        {
-        //            aerobic++;
-        //        }
-        //    };
-        //    int? flexibility = 0;
-        //    foreach (var exercise in db.ChosenExercises)
-        //    {
-        //        if (exercise.UserId == currentUser.Id && exercise.ExercisePlanID == myExercisePlan.MyExercisePlanID && exercise.Type == Models.Type.Flexibility)
-        //        {
-        //            flexibility++;
-        //        }
-        //    };
-        //    int? reflexes = 0;
-        //    foreach (var exercise in db.ChosenExercises)
-        //    {
-        //        if (exercise.UserId == currentUser.Id && exercise.ExercisePlanID == myExercisePlan.MyExercisePlanID && exercise.Type == Models.Type.Reflexes)
-        //        {
-        //            reflexes++;
-        //        }
-        //    };
-
-
-
-        //    string[] xValue = new string[] { "Strength", "Aerobic", "Flexibility", "Reflexes" };
-
-        //    int[] yValue = new int[] { strength.Value, aerobic.Value, flexibility.Value, reflexes.Value };
-
-        //    new Chart(width: 600, height: 400, theme: ChartTheme.Vanilla)
-
-        //      .AddTitle("Types of Exercises")
-
-        //     .AddSeries("Default", chartType: "column", xValue: xValue, yValues: yValue)
-
-        //           .Write("bmp");
-
-        //    return null;
-
-        //}
-
-        //public async System.Threading.Tasks.Task<ActionResult> CharterColumn()
-
-        //{
-
-        //    var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
-        //    var myExercisePlan = db.MyExercisePlans.Where(p => p.MyExercisePlanID == id).FirstOrDefault();
-
-        //    int? strength = 0;
-        //    foreach (var exercise in db.ChosenExercises)
-        //    {
-        //        if (exercise.ExercisePlanID == myExercisePlan.MyExercisePlanId && exercise.Type == Models.Type.Strength)
-        //        {
-        //            strength++;
-        //        }
-        //    };
-        //    int? aerobic = 0;
-        //    foreach (var exercise in db.ChosenExercises)
-        //    {
-        //        if (exercise.UserId == currentUser.Id && exercise.Type == Models.Type.Aerobic)
-        //        {
-        //            aerobic++;
-        //        }
-        //    };
-        //    int? flexibility = 0;
-        //    foreach (var exercise in db.ChosenExercises)
-        //    {
-        //        if (exercise.Type == Models.Type.Flexibility)
-        //        {
-        //            flexibility++;
-        //        }
-        //    };
-        //    int? reflexes = 0;
-        //    foreach (var exercise in db.ChosenExercises)
-        //    {
-        //        if (exercise.UserId == currentUser.Id && exercise.Type == Models.Type.Reflexes)
-        //        {
-        //            reflexes++;
-        //        }
-        //    };
-
-
-
-        //    string[] xValue = new string[] { "Strength", "Aerobic", "Flexibility", "Reflexes" };
-
-        //    int[] yValue = new int[] { strength.Value, aerobic.Value, flexibility.Value, reflexes.Value };
-
-        //    new Chart(width: 600, height: 400, theme: ChartTheme.Vanilla)
-
-        //      .AddTitle("Types of Exercises")
-
-        //     .AddSeries("Default", chartType: "column", xValue: xValue, yValues: yValue)
-
-        //           .Write("bmp");
-
-        //    return null;
-
-        //}
+       
 
     }
 }

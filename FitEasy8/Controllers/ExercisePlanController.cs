@@ -34,6 +34,7 @@ namespace FitEasy8.Controllers
 
 
         // Due to the amount of Lines, I have split this section into regions to make it easier to read.
+        // It Contains logic for both ExercisePlan and MyExercisePlan
 
         #region ExercisePlan IndexPage
 
@@ -43,7 +44,6 @@ namespace FitEasy8.Controllers
             var viewModel = new ExercisePlanIndexData();
 
             viewModel.ExercisePlans = db.ExercisePlans
-                //.Contains(i => i.UserID)
                 .Include(i => i.Exercises.Select(c => c.BodyParts))
                 .OrderBy(i => i.Title);
 
@@ -69,7 +69,7 @@ namespace FitEasy8.Controllers
 
          
 
-
+            //Counts the amount of exercise Plans the user has.
             double? count = 0;
             foreach (var plan in db.MyExercisePlans)
             {
@@ -81,6 +81,7 @@ namespace FitEasy8.Controllers
                 }
             }
 
+            // Counts the amount of Exercises the User has.
             double? count1 = 0;
             foreach (var exercise in db.ChosenExercises)
             {
@@ -91,90 +92,8 @@ namespace FitEasy8.Controllers
                 }
             }
 
-            string smessage;
-            int? strength = 0;
-            foreach (var exercise in db.ChosenExercises)
-            {
-                if (exercise.UserId == currentUser.Id && exercise.Type == Models.Type.Strength)
-                {
-                    strength++;
-                }
-                if (strength <= 2 && count1 >= 10)
-                {
-                    smessage = "We notice only 1/5th or lower of your exercise types are Strength based. Perhpas you should add in a few more Strength based exericses to your future plans";
-
-                    ViewBag.SMessage = smessage.ToString();
-                }
-                else
-                {
-                    smessage = "";
-                    ViewBag.SMessage = smessage.ToString();
-                }
-            };
-
-            string amessage;
-            int? aerobic = 0;
-            foreach (var exercise in db.ChosenExercises)
-            {
-                if (exercise.UserId == currentUser.Id && exercise.Type == Models.Type.Aerobic)
-                {
-                    aerobic++;
-                }
-                if (aerobic <= 2 && count1 >= 10)
-                {
-                    amessage = "We notice only 1/5th of your exercise types are Aerobic based. Aerobic exercises are the most important for keeping your heart healthy. Perhpas you should add in a few more Aerobic based exericses to your future plans";
-
-                    ViewBag.aMessage = amessage.ToString();
-                }
-                else
-                {
-                    amessage = "";
-                    ViewBag.aMessage = amessage.ToString();
-                }
-            };
-
-            string fmessage;
-            int? flexibility = 0;
-            foreach (var exercise in db.ChosenExercises)
-            {
-                if (exercise.UserId == currentUser.Id && exercise.Type == Models.Type.Flexibility)
-                {
-                    flexibility++;
-                }
-                if (flexibility <= 2 && count1 >= 10)
-                {
-                    fmessage = "We notice only 1/5th of your exercise types are Flexibilty based. Exercises based around Flexibility are a great way to keep your muscles loose and young. Perhpas you should add in a few more Flex based exericses to your future plans";
-
-                    ViewBag.fMessage = fmessage.ToString();
-                }
-                else
-                {
-                    fmessage = "";
-                    ViewBag.fMessage = fmessage.ToString();
-                }
-            };
-
-            int? reflexes = 0;
-            string rmessage;
-            foreach (var exercise in db.ChosenExercises)
-            {
-                if (exercise.UserId == currentUser.Id && exercise.Type == Models.Type.Reflexes)
-                {
-                    reflexes++;
-                }
-                if (reflexes <= 2 && count1 >= 10)
-                {
-                    rmessage = "We notice only 1/5th of your exercise types are Reflex based. Relex based exercises keep your mind sharp and your hand-eye coordination skill sharper.  Perhpas you should add in a few more Reflex based exericses to your future plans";
-
-                    ViewBag.rMessage = rmessage.ToString();
-                }
-                else
-                {
-                    rmessage = "";
-                    ViewBag.rMessage = rmessage.ToString();
-                }
-            };
-
+            // Counts the amount of exercise Plans that are currently done 
+            // and sends message if they are all complete.
             double? isDone = 0;
             foreach (var plan in db.MyExercisePlans)
             {
@@ -212,7 +131,7 @@ namespace FitEasy8.Controllers
         {
 
             var exercisePlan = db.ExercisePlans.Include(i => i.Exercises).Where(p => p.ExercisePlanID == id).FirstOrDefault();
-            // note you may need to add .Include("SpecificationsTable") in the above
+           
             if (exercisePlan == null)
             {
                 return new HttpNotFoundResult();
@@ -252,13 +171,7 @@ namespace FitEasy8.Controllers
                 IsDone = myExercisePlan.IsDone,
                 Difficulty = myExercisePlan.Difficulty,
                 Reps = myExercisePlan.Reps,
-                //Exercises = myExercisePlan.Exercises.Select(s => new ExerciseVM()
-                //{
-                //    Title = s.Title,
-                //    Description = s.Description,
-                //    Type = s.Type,
-                //    BodyPart = s.BodyPart
-                //})
+               
             };
 
             ViewBag.myExercises = db.ChosenExercises.Where(p => p.ExercisePlanID == id);
@@ -274,6 +187,8 @@ namespace FitEasy8.Controllers
             var exercisePlan = new ExercisePlan();
             exercisePlan.Exercises = new List<Exercise>();
             PopulateAssignedExerciseData(exercisePlan);
+
+            //getting Difficulty enum values
             var enumData = from Difficulty e in Enum.GetValues(typeof(Difficulty))
                            select new
                            {
@@ -286,13 +201,14 @@ namespace FitEasy8.Controllers
             return View();
         }
 
-
+        //Creates ExercisePlan, MyExercisePlan, ChosenExercise and Chosen Exercises BodyParts.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "ExercisePlanID,Title,Description,Difficulty ")] ExercisePlan exercisePlan, string[] selectedExercises, MyExercisePlan myExercisePlan)
         {
-
+            
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
+            //If User has selected Exercises, add them to ExercisePlan.Exercises and MYExercisePlan.Exercises
             if (selectedExercises != null)
             {
                 myExercisePlan.Exercises = new List<Exercise>();
@@ -303,6 +219,7 @@ namespace FitEasy8.Controllers
                     exercisePlan.Exercises.Add(exerciseToAdd);
                     myExercisePlan.Exercises.Add(exerciseToAdd);
 
+                    //Creates Chosen Exercise for each exercise selected in myExercisePlan.
                     ChosenExercise chosenExercise = new ChosenExercise()
                     {
                         UserId = currentUser.Id,
@@ -324,7 +241,7 @@ namespace FitEasy8.Controllers
                     db.ChosenExercises.Add(chosenExercise);
 
 
-
+                    // Creates Exercises Chosen BodyParts.
                     var bodyPart = db.BodyParts.Where(bp => bp.BodyPartID == chosenExercise.CEBodyPartID).FirstOrDefault();
 
                     foreach (var bp in db.BodyParts)
@@ -351,26 +268,7 @@ namespace FitEasy8.Controllers
 
                         }
 
-                        //else
-                        //{
-                        //    ChosenBodyPart chosenBodyPart = new ChosenBodyPart()
-                        //    {
-
-                        //        OtherBodyPartID = chosenExercise.CEBodyPartID,
-                        //        ChosenExerciseID = chosenExercise.ChosenExerciseID,
-                        //        MyExercisePlanID = myExercisePlan.MyExercisePlanID,
-                        //        UserId = currentUser.Id,
-                        //        Title = bp.Title,
-                        //        Description = bp.Description,
-                        //        ImageUrl = bp.ImageUrl
-
-
-
-                        //    };
-
-                        //    db.ChosenBodyParts.Add(chosenBodyPart);
-
-                        //}
+                   
 
 
                     }
@@ -378,6 +276,8 @@ namespace FitEasy8.Controllers
                 }
             }
 
+
+            //If the model state is valid. MyExercisePlan and ExercisePlan is created.
             if (ModelState.IsValid)
             {
 
@@ -393,6 +293,7 @@ namespace FitEasy8.Controllers
                 myExercisePlan.Count = 1;
                 myExercisePlan.Difficulty = exercisePlan.Difficulty;
 
+                //Setting Exercise Reps based on Exercise Plan Difficulty setting.
                 if (myExercisePlan.Difficulty == Difficulty.easy)
                 {
                     myExercisePlan.Reps = "For weights and strength : 3X10 of whatever weight is comfortable. For Aerobic : 5 sets of 3 minutes, taking intervals between sets.  ";
@@ -414,7 +315,6 @@ namespace FitEasy8.Controllers
                 db.ExercisePlans.Add(exercisePlan);
                 db.SaveChanges();
                 db.MyExercisePlans.Add(myExercisePlan);
-                //currentUser.ExercisePlans.Add(exercisePlan);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -424,121 +324,7 @@ namespace FitEasy8.Controllers
         }
 
         #endregion
-
-        #region ExercisePlan Edits
-
-
-        private void PopulateAssignedExerciseData(ExercisePlan exercisePlan)
-        {
-            var allExercises = db.Exercises;
-            var exercisePlanExercises = new HashSet<int>(exercisePlan.Exercises.Select(c => c.ExerciseID));
-            var viewModel = new List<AssignedExerciseData>();
-            foreach (var exercise in allExercises)
-            {
-                viewModel.Add(new AssignedExerciseData
-                {
-                    ExerciseID = exercise.ExerciseID,
-                    Title = exercise.Title,
-                    Assigned = exercisePlanExercises.Contains(exercise.ExerciseID)
-                });
-            }
-            ViewBag.Exercises = viewModel;
-        }
-
-
-        // GET: ExercisePlan/Edit/5
-        public ActionResult Edit(int? id)
-        {
-
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ExercisePlan exercisePlan = db.ExercisePlans
-                .Include(i => i.Exercises)
-                .Where(i => i.ExercisePlanID == id)
-                .Single();
-            PopulateAssignedExerciseData(exercisePlan);
-            if (exercisePlan == null)
-            {
-                return HttpNotFound();
-            }
-            return View(exercisePlan);
-
-        }
-
-        // POST: ExercisePlan/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int? id, string[] selectedExercises)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var exercisePlanToUpdate = db.ExercisePlans
-               .Include(i => i.Exercises)
-               .Where(i => i.ExercisePlanID == id)
-               .Single();
-
-            if (TryUpdateModel(exercisePlanToUpdate, "",
-               new string[] { "Title", "Description" }))
-            {
-                try
-                {
-
-
-                    UpdateWorkOutPlanExercises(selectedExercises, exercisePlanToUpdate);
-
-                    db.SaveChanges();
-
-                    return RedirectToAction("Index");
-                }
-                catch (RetryLimitExceededException /* dex */)
-                {
-                    //Log the error (uncomment dex variable name and add a line here to write a log.
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
-                }
-            }
-            PopulateAssignedExerciseData(exercisePlanToUpdate);
-            return View(exercisePlanToUpdate);
-        }
-
-
-        private void UpdateWorkOutPlanExercises(string[] selectedExercises, ExercisePlan exercisePlanToUpdate)
-        {
-            if (selectedExercises == null)
-            {
-                exercisePlanToUpdate.Exercises = new List<Exercise>();
-                return;
-            }
-
-            var selectedExercisesHS = new HashSet<string>(selectedExercises);
-            var exercisePlanExercises = new HashSet<int>
-                (exercisePlanToUpdate.Exercises.Select(c => c.ExerciseID));
-            foreach (var exercise in db.Exercises)
-            {
-                if (selectedExercisesHS.Contains(exercise.ExerciseID.ToString()))
-                {
-                    if (!exercisePlanExercises.Contains(exercise.ExerciseID))
-                    {
-                        exercisePlanToUpdate.Exercises.Add(exercise);
-                    }
-                }
-                else
-                {
-                    if (exercisePlanExercises.Contains(exercise.ExerciseID))
-                    {
-                        exercisePlanToUpdate.Exercises.Remove(exercise);
-                    }
-                }
-            }
-        }
-
-        #endregion
-
+        
         #region    MyExercisePlan Edits
 
 
@@ -718,16 +504,19 @@ namespace FitEasy8.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed2(int id)
         {
+            //Find and remove User Exercise Plan
             MyExercisePlan myExercisePlan = db.MyExercisePlans.Find(id);
             db.MyExercisePlans.Remove(myExercisePlan);
             db.SaveChanges();
 
+            //Delete all exercises related to plan.
             var exercises = db.ChosenExercises.Where(e => e.ExercisePlanID == id);
             foreach (var exercise in exercises)
             {
                 db.ChosenExercises.Remove(exercise);
-                db.SaveChanges();
+                
             }
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -751,74 +540,9 @@ namespace FitEasy8.Controllers
         }
 
 
-        public async Task<ActionResult> AddToPlan(int id)
-        {
-            var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
-            // Retrieve the plan from the database
-            var addedExercisePlan = db.ExercisePlans
-                .Single(exercisePlan => exercisePlan.ExercisePlanID == id);
-
-            MyExercisePlan myExercisePlan = new MyExercisePlan()
-            {
-                ExercisePlanID = addedExercisePlan.ExercisePlanID,
-                UserId = currentUser.Id,
-                Title = addedExercisePlan.Title,
-                Description = addedExercisePlan.Description,
-                Exercises = addedExercisePlan.Exercises,
-                AddedOn = DateTime.Now,
-                IsComplete = 0,
-                IsDone = false,
-                Difficulty = addedExercisePlan.Difficulty
-
-
-
-            };
-
-            db.MyExercisePlans.Add(myExercisePlan);
-            db.SaveChanges();
-
-            myExercisePlan.Exercises = new List<Exercise>();
-            foreach (var exercise in addedExercisePlan.Exercises)
-            {
-                myExercisePlan.Exercises.Add(exercise);
-            }
-
-            db.SaveChanges();
-
-            var exercises = this.db.ChosenExercises
-                            .Where(c => c.ExercisePlanID == id);
-            foreach (var exercise in exercises)
-            {
-                ChosenExercise myExercise = new ChosenExercise()
-                {
-                    ExercisePlanID = myExercisePlan.MyExercisePlanID,
-                    MyExercisePlanID = myExercisePlan.MyExercisePlanID,
-                    UserId = currentUser.Id,
-                    Title = exercise.Title,
-                    Description = exercise.Description,
-                    IsDone = false,
-                    CEBodyPartID = exercise.CEBodyPartID,
-                    Type = exercise.Type,
-                    Image = exercise.Image,
-                    ImageUrl = exercise.ImageUrl,
-                    VideoUrl = exercise.VideoUrl,
-                    Rating = exercise.Rating,
-                    Complete = 0,
-                    Count = 1
-
-
-                };
-                db.ChosenExercises.Add(myExercise);
-                db.SaveChanges();
-            }
-
-
-            return RedirectToAction("Index");
-        }
-
 
         #region MyExercisePlan Done?
-
+        // Sets Exercise Plans Boolean Done Satus
         public async Task<ActionResult> Done(int id, Achievement achievement)
         {
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
@@ -826,6 +550,9 @@ namespace FitEasy8.Controllers
             var myExercisePlan = db.MyExercisePlans
                 .Single(exercisePlan => exercisePlan.MyExercisePlanID == id);
 
+            //Set plan to done.
+            //Add 1 to amount of times exercise plan has been complete
+            // Add 1 to amount of Exercise Plans completed by User 
             if (myExercisePlan.IsDone == false)
             {
 
@@ -838,7 +565,7 @@ namespace FitEasy8.Controllers
                 db.SaveChanges();
 
 
-
+                // Create Achievement if Plan has been completed a certain amount of times
                 if (myExercisePlan.IsComplete == 5)
                 {
                     achievement = new Achievement { UserId = currentUser.Id, ExercisePlanName = myExercisePlan.Title, Date = DateTime.Now, Description = "Congratulations, you have completed your Exercise Plan 5 times! Keep up the good work!" };
@@ -847,17 +574,18 @@ namespace FitEasy8.Controllers
                 }
                 if (myExercisePlan.IsComplete == 10)
                 {
-                    achievement = new Achievement { UserId = currentUser.Id, ExercisePlanName = myExercisePlan.Title, Date = DateTime.Now, Description = "Congratulations, you have completed your Exercise Plan 10 times! You are really putting in some effort. Here have this online voucher on us! Use the code provided on WWW.SportingClothingShop.COM to get 15% off any clothing! Voucher Code : X2342J21" };
+                    achievement = new Achievement { UserId = currentUser.Id, ExercisePlanName = myExercisePlan.Title, Date = DateTime.Now, Description = "Congratulations, you have completed your Exercise Plan 10 times! You are really putting in some effort. Here have this online voucher on us! Use the code provided on WWW.SportingClothingShop.COM to get 15% off any clothing! Voucher Code : X2342J21." + currentUser.Id + myExercisePlan.MyExercisePlanID };
                     db.Achievements.Add(achievement);
                     db.SaveChanges();
                 }
                 if (myExercisePlan.IsComplete == 20)
                 {
-                    achievement = new Achievement { UserId = currentUser.Id, ExercisePlanName = myExercisePlan.Title, Date = DateTime.Now, Description = "Congratulations, you have completed your Exercise Plan 20! You must be working your ass off. Here have this online voucher code! Use the code provided on WWW.SportingClothesShop.COM to get 25% off any clothing or footwear! Voucher Code : P1324gre908. " };
+                    achievement = new Achievement { UserId = currentUser.Id, ExercisePlanName = myExercisePlan.Title, Date = DateTime.Now, Description = "Congratulations, you have completed your Exercise Plan 20! You must be working your ass off. Here have this online voucher code! Use the code provided on WWW.SportingClothesShop.COM to get 25% off any clothing or footwear! Voucher Code : P1324gre908." + currentUser.Id + myExercisePlan.MyExercisePlanID };
                     db.Achievements.Add(achievement);
                     db.SaveChanges();
                 }
 
+                // Get all exercises in Plan and set them to Done..
                 var chosenExercises = db.ChosenExercises
                     .Where(exercise => exercise.ExercisePlanID == myExercisePlan.MyExercisePlanID);
 
@@ -872,6 +600,7 @@ namespace FitEasy8.Controllers
             }
 
             else
+            // If already Done, Set Plan and all related exercises to false 
             {
 
                 myExercisePlan.IsDone = false;
@@ -893,7 +622,7 @@ namespace FitEasy8.Controllers
         }
 
 
-
+        #region Setting Exercises in Plan to done and undone
         public async Task<ActionResult> ExerciseDone(int id, Achievement achievement)
         {
 
@@ -959,13 +688,13 @@ namespace FitEasy8.Controllers
             }
             if (myExercisePlan2.IsComplete == 10)
             {
-                achievement = new Achievement { UserId = currentUser.Id, ExercisePlanName = myExercisePlan2.Title, Date = DateTime.Now, Description = "Congratulations, you have completed your Exercise Plan 10 times! You are really putting in some effort. Here have this online voucher on us! Use the code provided on WWW.SportingClothingShop.COM to get 15% off any clothing! Voucher Code : X2342J21" };
+                achievement = new Achievement { UserId = currentUser.Id, ExercisePlanName = myExercisePlan2.Title, Date = DateTime.Now, Description = "Congratulations, you have completed your Exercise Plan 10 times! You are really putting in some effort. Here have this online voucher on us! Use the code provided on WWW.SportingClothingShop.COM to get 15% off any clothing! Voucher Code : X2342J21." + currentUser.Id + chosenExercise.ChosenExerciseID };
                 db.Achievements.Add(achievement);
                 db.SaveChanges();
             }
             if (myExercisePlan2.IsComplete == 20)
             {
-                achievement = new Achievement { UserId = currentUser.Id, ExercisePlanName = myExercisePlan2.Title, Date = DateTime.Now, Description = "Congratulations, you have completed your Exercise Plan 20! You must be working your ass off. Here have this online voucher code! Use the code provided on WWW.SportingClothesShop.COM to get 25% off any clothing or footwear! Voucher Code : P1324gre908. " };
+                achievement = new Achievement { UserId = currentUser.Id, ExercisePlanName = myExercisePlan2.Title, Date = DateTime.Now, Description = "Congratulations, you have completed your Exercise Plan 20! You must be working your ass off. Here have this online voucher code! Use the code provided on WWW.SportingClothesShop.COM to get 25% off any clothing or footwear! Voucher Code : P1324gre908." + currentUser.Id + chosenExercise.ChosenExerciseID };
                 db.Achievements.Add(achievement);
                 db.SaveChanges();
             }
@@ -1020,15 +749,22 @@ namespace FitEasy8.Controllers
 
             return RedirectToAction("Details2", new { id = chosenExercise.ExercisePlanID });
         }
+#endregion
+
+
         #endregion
 
         #region  Difficulty Setting
+
+        //Changes the Exercise Plans Difficulty to a higher setting, thus changing the Exercise Plans Reps.
         public async Task<ActionResult> Harder(int id)
         {
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
             // Retrieve the plan from the database
             var myExercisePlan = db.MyExercisePlans
                 .Single(exercisePlan => exercisePlan.MyExercisePlanID == id);
+
+            //Change the Difficulty Setting
             if (myExercisePlan.Difficulty == Difficulty.easy)
             {
                 myExercisePlan.Difficulty = Difficulty.medium;
@@ -1047,6 +783,7 @@ namespace FitEasy8.Controllers
                 db.SaveChanges();
             }
 
+            //Change the Reps
             if (myExercisePlan.Difficulty == Difficulty.easy)
             {
                 myExercisePlan.Reps = "For weights and strength : 3X10 of whatever weight is comfortable. For Aerobic : 5 sets of 3 minutes, taking intervals between sets.  ";
@@ -1070,12 +807,15 @@ namespace FitEasy8.Controllers
 
         }
 
+        //Changing the Setting of the Exercise Plan to an Easer setting.
         public async Task<ActionResult> Easier(int id)
         {
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
             // Retrieve the plan from the database
             var myExercisePlan = db.MyExercisePlans
                 .Single(exercisePlan => exercisePlan.MyExercisePlanID == id);
+
+            // Change the Difficulty Setting
             if (myExercisePlan.Difficulty == Difficulty.extreme)
             {
                 myExercisePlan.Difficulty = Difficulty.hard;
@@ -1094,7 +834,7 @@ namespace FitEasy8.Controllers
                 db.SaveChanges();
             }
 
-
+            // Change the Reps
             if (myExercisePlan.Difficulty == Difficulty.easy)
             {
                 myExercisePlan.Reps = "For weights and strength : 3X10 of whatever weight is comfortable. For Aerobic : 5 sets of 3 minutes, taking intervals between sets.  ";
@@ -1122,11 +862,11 @@ namespace FitEasy8.Controllers
         public async System.Threading.Tasks.Task<ActionResult> CharterColumn()
 
         {
-
-
+            //Get User
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
 
-
+            #region Exercise Bar Chart Values
+            //Geting values for chart
 
             int? strength = 0;
             foreach (var exercise in db.ChosenExercises)
@@ -1163,7 +903,7 @@ namespace FitEasy8.Controllers
                 }
             };
 
-
+            #endregion
 
             string[] xValue = new string[] { "Strength", "Aerobic", "Flexibility", "Reflexes" };
 
@@ -1181,13 +921,15 @@ namespace FitEasy8.Controllers
 
         }
 
-
+        // Pie Chart on User's Exercise Plans copmleteion status'
         public async System.Threading.Tasks.Task<ActionResult> ChartPie()
 
         {
 
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
 
+            #region Exercise Plan Completion Chart Values
+            // Count how many Exercise Plans are done
             int? isDone = 0;
             foreach (var plan in db.MyExercisePlans)
             {
@@ -1196,6 +938,8 @@ namespace FitEasy8.Controllers
                     isDone++;
                 }
             };
+
+            // Count how many Plans are not done.
             int? notDone = 0;
             foreach (var plan in db.MyExercisePlans)
             {
@@ -1205,6 +949,9 @@ namespace FitEasy8.Controllers
                 }
             };
 
+            #endregion
+
+            // Setting x and y Values based on If there is both a done plan and a undone plan in db
             if (isDone >= 1 && notDone >= 1)
             {
                 string[] xValue = new string[] { "Complete : " + isDone.Value, "Not Complete : " + notDone.Value };
@@ -1218,6 +965,10 @@ namespace FitEasy8.Controllers
                       .Write("bmp");
                 return null;
             }
+
+
+
+            // Setting x and y Values based on If there is only a done plan in the db.
             else if (isDone >= 1 && notDone == 0)
             {
                 string[] xValue = new string[] { "Complete : " + isDone.Value };
@@ -1231,6 +982,10 @@ namespace FitEasy8.Controllers
                       .Write("bmp");
                 return null;
             }
+
+
+
+            // Setting x and y Values based on if there is only an undone plan in db.
             else if (isDone == 0 && notDone >= 1)
             {
                 string[] xValue = new string[] { "Not Complete : " + notDone.Value };
@@ -1250,11 +1005,15 @@ namespace FitEasy8.Controllers
 
         }
 
+        // Pie Chart for Exercise Type percentages
         public async System.Threading.Tasks.Task<ActionResult> ChartPieType()
 
         {
 
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
+
+
+            #region Exercise Type Chart Values
 
             double? count1 = 0;
             foreach (var exercise in db.ChosenExercises)
@@ -1320,8 +1079,9 @@ namespace FitEasy8.Controllers
                 rpercent = (reflexes.Value / count1.Value) * (100);
 
             };
+#endregion
 
-
+            // X values hold Exercise Type Titles and percentage score. Y value holds just the exercise Type percent value.
             string[] xValue = new string[] { "Strength : " + spercent.Value, "Aerobic : " + apercent.Value, "Flex" + fpercent.Value, "Reflex : " + rpercent.Value };
             double[] yValue = new double[] { spercent.Value, apercent.Value, fpercent.Value, rpercent.Value };
             new Chart(width: 700, height: 500, theme: ChartTheme.Vanilla)
@@ -1359,20 +1119,23 @@ namespace FitEasy8.Controllers
             int? strength = 0;
             double? spercent;
 
-            //results based on TargetAim
+            //results based on TargetAim 
             #region TargetAim == Other Suggestions
             if (currentUser.TargetAim == TargetAim.Other)
             {
 
                 foreach (var exercise in db.ChosenExercises)
                 {
+                    // calculating the amount of Exercise Types that are strength based.
                     if (exercise.UserId == currentUser.Id && exercise.Type == Models.Type.Strength)
                     {
                         strength++;
                     }
 
+                    //getting the percentge of the strength based exercises
+                    // and sending suggestion message
                     spercent = (strength.Value / count1.Value) * (100);
-                    if (spercent <= 20) //strength <= 2 && count1 >= 10
+                    if (spercent <= 20) 
                     {
                         smessage = "We noticed only " + spercent + "% of your exercise types are Strength based. Perhpas you should add  a few more Strength based exercises to your future plans";
 
@@ -1393,6 +1156,8 @@ namespace FitEasy8.Controllers
                     }
                 };
 
+
+                // calculating the amount of Exercise Types that are strength based, their percentage and a suggestions message.
                 string amessage;
                 int? aerobic = 0;
                 double? apercent;
@@ -1424,6 +1189,8 @@ namespace FitEasy8.Controllers
                     }
                 };
 
+
+                // calculating the amount of Exercise Types that are Flexibity based, Their Percentage and suggestion message.
                 string fmessage;
                 int? flexibility = 0;
                 double? fpercent;
@@ -1455,6 +1222,8 @@ namespace FitEasy8.Controllers
                     }
                 };
 
+
+                // calculating the amount of Exercise Types that are Reflex based, Their Percentage and suggestion message.
                 int? reflexes = 0;
                 string rmessage;
                 double? rpercent;
@@ -1485,6 +1254,7 @@ namespace FitEasy8.Controllers
                     }
                 };
 
+                // Checking Amount of Exercise Plans Completed and sneding Suggestion message
                 double? isDonepercent = 0;
                 string isdmessage;
                 double? isDone = 0;
@@ -1871,6 +1641,23 @@ namespace FitEasy8.Controllers
 
         }
         #endregion
+
+        private void PopulateAssignedExerciseData(ExercisePlan exercisePlan)
+        {
+            var allExercises = db.Exercises;
+            var exercisePlanExercises = new HashSet<int>(exercisePlan.Exercises.Select(c => c.ExerciseID));
+            var viewModel = new List<AssignedExerciseData>();
+            foreach (var exercise in allExercises)
+            {
+                viewModel.Add(new AssignedExerciseData
+                {
+                    ExerciseID = exercise.ExerciseID,
+                    Title = exercise.Title,
+                    Assigned = exercisePlanExercises.Contains(exercise.ExerciseID)
+                });
+            }
+            ViewBag.Exercises = viewModel;
+        }
     }
 
 }

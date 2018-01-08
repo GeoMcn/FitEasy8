@@ -216,9 +216,9 @@
     </Compile>
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Migrations\201712102227174_InitialCreate.cs" />
-    <Compile Include="Migrations\201712102227174_InitialCreate.Designer.cs">
-      <DependentUpon>201712102227174_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\201712112245508_InitialCreate.cs" />
+    <Compile Include="Migrations\201712112245508_InitialCreate.Designer.cs">
+      <DependentUpon>201712112245508_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Achievement.cs" />
@@ -263,9 +263,7 @@
     <Content Include="Images\fiteasypic2.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Properties\PublishProfiles\FitEasy88 - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\FitEasy9 - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\FitEasy92 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\FitEasy89 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.2.1.js" />
     <Content Include="Scripts\jquery-3.2.1.min.js" />
@@ -363,8 +361,8 @@
     <Content Include="Scripts\jquery-3.2.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201712102227174_InitialCreate.resx">
-      <DependentUpon>201712102227174_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201712112245508_InitialCreate.resx">
+      <DependentUpon>201712112245508_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

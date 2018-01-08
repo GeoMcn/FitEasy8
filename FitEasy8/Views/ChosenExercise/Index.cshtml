@@ -18,10 +18,7 @@
         @*<th>Video</th>*@
         @*<th>Type</th>*@
         <th>IsDone</th>
-        <th>EPId</th>
-        <th>MyEPId</th>
         <th>TimesCompleted</th>
-        <th>BPId</th>
 
     </tr>
 
@@ -51,18 +48,11 @@
             <td>
                 @Html.ValueFor(modelItem => item.IsDone)
             </td>
-            <td>
-                @Html.ValueFor(modelItem => item.ExercisePlanID)
-            </td>
-            <td>
-                @Html.ValueFor(modelItem => item.MyExercisePlanID)
-            </td>
+            
             <td>
                 @Html.ValueFor(modelItem => item.Complete.Value)
             </td>
-            <td>
-                @Html.ValueFor(modelItem => item.CEBodyPartID)
-            </td>
+            
             <td>
                 @Html.ActionLink("Done", "Done", new { id = item.ChosenExerciseID }, null)
                 @Html.ActionLink("Undo", "NotDone", new { id = item.ChosenExerciseID }, null)

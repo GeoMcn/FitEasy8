@@ -12,7 +12,6 @@ namespace FitEasy8.DAL
 {
     public class FitEasyContext : IdentityDbContext<User>
     {
-
         public FitEasyContext() : base("FitEasyContext")
         {
         }
@@ -59,9 +58,7 @@ namespace FitEasy8.DAL
                 .ToTable("Users");
 
 
-            //modelBuilder.Entity<User>()
-            //   .HasOptional(c => c.MyExercisePlan)
-            //   .WithRequired(i => i.User);
+            
 
             base.OnModelCreating(modelBuilder);
         }
@@ -70,8 +67,7 @@ namespace FitEasy8.DAL
         {
             return new FitEasyContext();
         }
-
-
+       
 
 
         public DbQuery<T> Query<T>() where T : class

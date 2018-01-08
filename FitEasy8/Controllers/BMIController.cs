@@ -40,7 +40,7 @@ namespace FitEasy8.Controllers
                .Where(i => i.UserId == currentUser.Id)
                .OrderBy(i => i.AddedOn);
 
-
+            // Get average total weight of users past Weight recrods
             double? total = 0, avg = 0;
             foreach (var bmi in viewModel.BMIs)
             {
@@ -53,7 +53,7 @@ namespace FitEasy8.Controllers
                 }
             }
 
-            string message;
+            //Get Last 2 Weight records and Calculate Weight change.
             var lastBMI = this.db.BMI
                             .Where(c => c.UserId == currentUser.Id)
                             .OrderByDescending(t => t.AddedOn)
@@ -67,6 +67,9 @@ namespace FitEasy8.Controllers
             double? amountLost = previousBMI.Weight - lastBMI.Weight;
             double? amountGained = lastBMI.Weight - previousBMI.Weight;
 
+
+            // Send a message Based on Users Target Aim and if Weight has Increaed or Decreased
+            string message;
             if (currentUser.TargetAim == TargetAim.GainMuscle)
             {
                 if (lastBMI.Weight < previousBMI.Weight)
@@ -168,6 +171,8 @@ namespace FitEasy8.Controllers
                 bMI.Weight = 1;
             }
 
+
+            //Sending BMI Verdict message depending on BMI Result and User Target Aim
             bMI.Result = (bMI.Weight.Value) / (bMI.Height.Value * bMI.Height.Value);
 
             if (currentUser.TargetAim == TargetAim.GainMuscle)
@@ -341,6 +346,7 @@ namespace FitEasy8.Controllers
             base.Dispose(disposing);
         }
 
+        //Weight Bar Chart
         public async System.Threading.Tasks.Task<ActionResult> CharterColumn()
 
         {

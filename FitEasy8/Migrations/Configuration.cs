@@ -5,7 +5,6 @@ namespace FitEasy8.Migrations
     using System.Collections.Generic;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Data.Entity.Validation;
     using System.Linq;
 
     internal sealed class Configuration : DbMigrationsConfiguration<FitEasy8.DAL.FitEasyContext>
@@ -33,21 +32,11 @@ namespace FitEasy8.Migrations
 
             };
 
-            try
-            {
+            
                 bodyParts.ForEach(s => context.BodyParts.AddOrUpdate(p => p.Title, s));
                 context.SaveChanges();
-            }
-            catch (DbEntityValidationException dbEx)
-            {
-                foreach (var validationErrors in dbEx.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        System.Console.WriteLine("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
-                    }
-                }
-            }
+            
+          
 
 
             var users = new List<User>
@@ -74,7 +63,7 @@ namespace FitEasy8.Migrations
 
             };
 
-            users.ForEach(s => context.Users.AddOrUpdate( s));
+            users.ForEach(s => context.Users.AddOrUpdate(p=> p.Password, s));
             context.SaveChanges();
 
             var exercises = new List<Exercise>
@@ -105,23 +94,11 @@ namespace FitEasy8.Migrations
             new Exercise {ExerciseID = 7545,BodyPartId= 222, Title = "The Back Extension ",ImageUrl ="http://www.racerxvt.com/images/content/article_photos/back_1.jpg", Description = " The back extension is performed while lying face down partway along a flat or angled bench, so that the hips are supported and the heels secured, by bending down at the waist and then straightening up again. This is a compound exercise that also involves the glutes.", VideoUrl = "https://www.youtube.com/watch?v=Bw9YuQTTc58", Rating = Rating.B, Type = FitEasy8.Models.Type.Strength},
             new Exercise {ExerciseID = 87699,BodyPartId= 098, Title = "Yoga ",ImageUrl ="http://kidshealth.org/misc/javascript/js_apps/kh-slideshows/yoga-flash-en/Yoga-enSS-4.jpg", Rating = Rating.A, Type = FitEasy8.Models.Type.Flexibility, Description = "Yoga is an ancient art based on a harmonizing system of development for the body, mind, and spirit. The continued practice of yoga will lead you to a sense of peace and well-being, and also a feeling of being at one with their environment. This is a simple definition."},
             };
-
-
-            try
-            {
+            
                 exercises.ForEach(s => context.Exercises.AddOrUpdate(p => p.Title, s));
                 context.SaveChanges();
-            }
-            catch (DbEntityValidationException dbEx)
-            {
-                foreach (var validationErrors in dbEx.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        System.Console.WriteLine("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
-                    }
-                }
-            }
+            
+           
 
             var bmis = new List<BMI>
             {
@@ -132,9 +109,11 @@ namespace FitEasy8.Migrations
             new BMI{UserId="3xexe3", Height = 1.62, Weight = 85, AddedOn = DateTime.Parse("2017-11-15") },
             };
 
-            bmis.ForEach(s => context.BMI.AddOrUpdate(s));
+            bmis.ForEach(s => context.BMI.AddOrUpdate(p => p.AddedOn, s));
             context.SaveChanges();
+
 
         }
     }
 }
+

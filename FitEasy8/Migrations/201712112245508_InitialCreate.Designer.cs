@@ -13,7 +13,7 @@ namespace FitEasy8.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201712102227174_InitialCreate"; }
+            get { return "201712112245508_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

@@ -29,8 +29,7 @@ namespace FitEasy8.Controllers
 
 
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
-            //var ChosenExercise = db.ChosenExercises.Where(p => p.ExercisePlanID == id && p.UserId == currentUser.Id).FirstOrDefault();
-
+            
             var viewModel = new ChosenBodyPartIndexData();
 
 

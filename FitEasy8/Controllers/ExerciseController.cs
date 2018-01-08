@@ -74,6 +74,8 @@ namespace FitEasy8.Controllers
             int pageNumber = (page ?? 1);
             return View(exercises.ToPagedList(pageNumber, pageSize));
         }
+
+        //Shows Exercises based on Customers Target Aim and Exercise Types
         public async System.Threading.Tasks.Task<ActionResult> SuggestedExercises(string sortOrder, string currentFilter, string searchString, int? page)
         {
             var currentUser = await manager.FindByIdAsync(User.Identity.GetUserId());
@@ -131,7 +133,7 @@ namespace FitEasy8.Controllers
         {
 
             var exercise = db.Exercises.Include(i => i.BodyParts).Where(p => p.ExerciseID == id).FirstOrDefault();
-            // note you may need to add .Include("SpecificationsTable") in the above
+    
             if (exercise == null)
             {
                 return new HttpNotFoundResult();
@@ -170,8 +172,6 @@ namespace FitEasy8.Controllers
         }
 
         // POST: Exercise/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ExerciseID,Title,BodyPart,Description,VideoUrl,Rating,Type")] string[] selectedBodyParts, [Bind(Exclude = "Image")] Exercise exercise, HttpPostedFileBase file)
@@ -249,57 +249,13 @@ namespace FitEasy8.Controllers
             }
             ViewBag.BodyParts = viewModel;
         }
-
-        public FileContentResult ExercisePhotos()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                String userId = User.Identity.GetUserId();
-
-                if (userId == null)
-                {
-                    string fileName = HttpContext.Server.MapPath(@"~/Images/noImg.png");
-
-                    byte[] imageData = null;
-                    FileInfo fileInfo = new FileInfo(fileName);
-                    long imageFileLength = fileInfo.Length;
-                    FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-                    BinaryReader br = new BinaryReader(fs);
-                    imageData = br.ReadBytes((int)imageFileLength);
-
-                    return File(imageData, "image/png");
-
-                }
-                // to get the user details to load user Image
-                var bdUsers = HttpContext.GetOwinContext().Get<FitEasyContext>();
-                var userImage = bdUsers.Users.Where(x => x.Id == userId).FirstOrDefault();
-
-                return new FileContentResult(userImage.Image, "image/jpeg");
-            }
-            else
-            {
-                string fileName = HttpContext.Server.MapPath(@"~/Images/noImg.png");
-
-                byte[] imageData = null;
-                FileInfo fileInfo = new FileInfo(fileName);
-                long imageFileLength = fileInfo.Length;
-                FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-                BinaryReader br = new BinaryReader(fs);
-                imageData = br.ReadBytes((int)imageFileLength);
-                return File(imageData, "image/png");
-
-            }
-        }
+        
 
 
         // GET: Exercise/Edit/5
         public ActionResult Edit(int? id)
         {
-
-
-
-
-
+            
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -321,8 +277,6 @@ namespace FitEasy8.Controllers
         }
 
         // POST: Exercise/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int? id, string[] selectedBodyParts)
